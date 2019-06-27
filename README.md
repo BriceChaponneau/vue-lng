@@ -1,37 +1,76 @@
-## Welcome to GitHub Pages
+# VUE-LNG
 
-You can use the [editor on GitHub](https://github.com/BriceChaponneau/vue-lng/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+TODO
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+---
+## Bienvenue sur la page de vue-lng
+vue-lng est un plugin facilitant les projets multilangues en Vue.js.
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+### Comment l'utiliser
+#### Installation
+Après avoir créé un projet Vue.js
+Il faut installer le paquet : 
+```
+npm i vue-lng
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+Ensuite, dans le fichier **mains.js** à la racine du projet, il faut importer le plugins :
+```
+import lng from "vue-lng";
+```
+Le plugin est désormais présent dans le projet
 
-### Jekyll Themes
+#### Configuration
+La base est la suivante :
+```
+Vue.use(lng, {
+  language: "en",
+  messages: {
+    en: {}
+  }
+});
+```
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/BriceChaponneau/vue-lng/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+- **language** : est la langue de base et de démarrage. _"en"_ est un exemple.
+- **messages** : est un objet représentant les messages de traduction. Il peut etre :
+  - un json direct :
+```
+messages: {
+  en: {}
+}
+```
+    
+  
+  
+  
+  - un import de fichiers soit unique (en.json), soit multiples (fr) et dans ce cas, il est necessaire d'utiliser un fichier js d'import comme le montre l'exemple. Supposons la structure suivante :
+```
+mains.js
+locales/
+  |_ en.json
+  |_ fr/
+    |_ home.json
+    |_ menu.json
+    |_ index.js
+```
+     
+     
+```
+messages: {
+  en: require("./locales/en.json"),
+  fr: require("./locales/fr/")
+}
+```
+...
 
-### Support or Contact
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Vue.use(lng, {
+  debug: false,    // OPTIONNAL : show warning (if debug is on), i.e : process.env.NODE_ENV
+  startOne: false, // OPTIONNAL : pluralize start at index 0 (false) / 1 (true, default)
+  fallback: false, // OPTIONNAL : allow get default valu from default locale
+  language: "en",
+  messages: {
+    en: require("./locales/en.json"),
+    fr: require("./locales/fr/")
+  }
+});
