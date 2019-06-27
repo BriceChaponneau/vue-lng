@@ -1,7 +1,7 @@
 {
   "name": "vue-lng",
   "description": "Internationalization plugin for Vue.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Brice CHAPONNEAU",
     "email": "chaponneau.brice@gmail.com"
@@ -26,10 +26,8 @@
   },
   "private": false,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "dist": "vue-cli-service build --name vue-lng --entry ./src/main.js --target lib"
+    "build": "vue-cli-service build --name vue-lng --entry ./index.js --target lib",
+    "lint": "vue-cli-service lint"
   },
   "main": "./dist/vue-lng.common.js",
   "dependencies": {

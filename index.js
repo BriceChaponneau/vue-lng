@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  *  ___
  * /\_ \
@@ -12,7 +13,7 @@
  * name : lng
  * description : Plugin to internationalize app with Vue.js
  * author : Brice CHAPONNEAU
- * version : 1.0.0
+ * version : 1.0.1
  *
  */
 
@@ -253,10 +254,10 @@ class lng {
   lngSet(language = this.storeVM.$data.default) {
     const errorNotExist = `Plugin lng : language [${language}] does not exist, selected : [${
       this.storeVM.$data.default
-    }]`;
+      }]`;
     const errorUndefined = `Plugin lng : language [${language}] is undefined, selected : [${
       this.storeVM.$data.language
-    }]`;
+      }]`;
 
     // la langue est la même que celle déjà definie. on ne fait rien
     if (language === this.storeVM.$data.language) return;
