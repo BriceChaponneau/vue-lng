@@ -185,7 +185,7 @@ ex : $lngGetAll(), return a string array ["en", "fr"]
 
 #### Demo
 Of course, an example is better than a thousand words.
-Go to the [GIT page of the demo project](https://www.npmjs.com/package/vue-lng) to test.
+Go to the [GIT page of the demo project](https://github.com/BriceChaponneau/vue-plugins-demo) to test.
 
 Thank you
 
@@ -377,6 +377,6 @@ ex : $lngGetAll(), retourne un tableau de chaine de caractères ["en", "fr"]
 
 #### Démonstration
 Bien entendu, un exemple vaut mieux que mille mots.
-Rendez vous sur la [page GIT du projet de démo](https://www.npmjs.com/package/vue-lng) pour tester.
+Rendez vous sur la [page GIT du projet de démo](https://github.com/BriceChaponneau/vue-plugins-demo) pour tester.
 
 Merci
