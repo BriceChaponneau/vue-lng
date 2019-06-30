@@ -13,7 +13,7 @@
  * name : lng
  * description : Plugin to internationalize app with Vue.js
  * author : Brice CHAPONNEAU
- * version : 1.0.1
+ * version : 1.0.2
  *
  */
 
@@ -26,18 +26,20 @@ class lng {
   constructor(Vue, opts) {
     if (opts.messages === undefined)
       throw new Error("Plugin lng : [options.messages] is undefined");
+    if (opts.fallback === undefined)
+      throw new Error("Plugin lng : [options.fallback] is undefined");
+
 
     // création d'une nouvelle instance pour gérer des données réactives
     this.storeVM = new Vue({
       data() {
         return {
-          debug: true, // show warning even if fallback = true
-          startOne: true, // start pluralize to index 1 instead of 0
-          fallback: true, // auto search path in default language message
-          default: "fr", // default language
-          language: "fr", // current language
-          messages: {}, // all defined messages/languages
-          json: {} // current message
+          debug: true, // affiche les message d'alerte
+          startOne: false, // démarre l'index à 0 ou 1 pour la pluralisation
+          language: "en", // langue courante
+          fallback: "fr", // langue de fallback
+          messages: {}, // messages par langues
+          json: {} // messages de la langue courante
         };
       }
     });
@@ -51,25 +53,25 @@ class lng {
       this.storeVM.$data.startOne = opts.startOne;
 
     // utilise la langue par default si la lnague est introuvable
-    if (typeof opts.fallback === "boolean")
-      this.storeVM.$data.fallback = opts.fallback;
+    if (typeof opts.fallback === "string") this.storeVM.$data.fallback = opts.fallback;
 
     // chargement des messages
     this.storeVM.$data.messages = opts.messages;
 
-    // définition de la langue et de la langue par defaut
-    if (opts.language && window.localStorage.language === undefined) {
-      this.storeVM.$data.default = opts.language;
-      this.storeVM.$data.language = opts.language;
+    // définition de la langue courante
+    if (window.localStorage.language === undefined) {
+      if (opts.language) this.storeVM.$data.language = opts.language;
+      else
+        this.storeVM.$data.language = opts.language || this._isoCleaner(navigator.userLanguage || navigator.language || navigator.browserLanguage || this.storeVM.$data.fallback);
+
+      // sauvegarde automatique de la langue dans le localstorage
+      window.localStorage.language = this.storeVM.$data.language;
+    } else {
+      this.storeVM.$data.language = window.localStorage.fallback;
     }
 
-    // sauvegarde automatique de la langue dans le localstorage
-    window.localStorage.language = this.storeVM.$data.language;
-
     // charge le(s) fichier(s) de la langue courante
-    if (
-      this.storeVM.$data.messages[this.storeVM.$data.language] instanceof Array
-    ) {
+    if (this.storeVM.$data.messages[this.storeVM.$data.language] instanceof Array) {
       this.storeVM.$data.json = this.extendJson(
         this.storeVM.$data.messages[this.storeVM.$data.language]
       );
@@ -78,11 +80,28 @@ class lng {
         this.storeVM.$data.language
       ];
     }
+
+    // messages undefined
+    if (this.storeVM.$data.json === undefined) {
+      if (this.storeVM.$data.fallback) {
+        const defaut = this.storeVM.$data.fallback;
+
+        if (this.storeVM.$data.debug) console.error(`Plugin lng : language "${this.storeVM.$data.language}" not found, fallback to "${defaut}"`);
+
+        window.localStorage.language = defaut;
+        this.storeVM.$data.language = defaut;
+        this.storeVM.$data.json = this.storeVM.$data.messages[defaut];
+
+        if (this.storeVM.$data.json === undefined) throw new Error(`Plugin lng : fallback language error, "${defaut}" not found !`);
+      } else {
+        if (this.storeVM.$data.debug) console.error(`Plugin lng : language "${this.storeVM.$data.language}" not found !`);
+      }
+    }
   }
 
   /**
    * ISOCLEANER
-   * @description LIMITATION AUX LANGUES CONNUES, SINON, FR
+   * @description LIMITATION AUX LANGUES CONNUES, SINON, EN
    * @param {string} iso
    */
   _isoCleaner(iso) {
@@ -118,11 +137,8 @@ class lng {
    */
   _jsonPathToValue(json, path, error = null) {
     if (!(json instanceof Object) || typeof path === "undefined") {
-      throw "Plugin lng : Not valid argument:json:".concat(
-        json,
-        ", path:",
-        path
-      );
+      if (this.storeVM.$data.debug) console.warn(`Plugin lng : Not valid argument:json:${json}, path: ${path}`);
+      return;
     }
     path = path.replace(/\[(\w+)\]/g, ".$1"); // converti les index en propriétés
     path = path.replace(/^\./, ""); // supprime le premier point
@@ -233,7 +249,7 @@ class lng {
    * @param {*} p2
    */
   lngT(path, language, p1, p2) {
-    const fallback = this.storeVM.$data.messages[this.storeVM.$data.default];
+    const fallback = this.storeVM.$data.messages[this.storeVM.$data.fallback];
     const translate = this.storeVM.$data.messages[language];
 
     if (translate === undefined) {
@@ -251,9 +267,9 @@ class lng {
    * @description AFFECTE LA LANGUE
    * @param {string} language
    */
-  lngSet(language = this.storeVM.$data.default) {
+  lngSet(language = this.storeVM.$data.fallback) {
     const errorNotExist = `Plugin lng : language [${language}] does not exist, selected : [${
-      this.storeVM.$data.default
+      this.storeVM.$data.fallback
       }]`;
     const errorUndefined = `Plugin lng : language [${language}] is undefined, selected : [${
       this.storeVM.$data.language
@@ -266,7 +282,7 @@ class lng {
     if (!this.lngGetAll().includes(language)) {
       if (this.storeVM.$data.debug) console.warn(errorNotExist);
       if (this.storeVM.$data.fallback) {
-        language = this.storeVM.$data.default;
+        language = this.storeVM.$data.fallback;
         return;
       }
       console.warn(errorNotExist);
@@ -280,7 +296,7 @@ class lng {
     }
     if (msg === undefined) {
       if (this.storeVM.$data.debug) console.warn(errorUndefined);
-      language = this.storeVM.$data.default;
+      language = this.storeVM.$data.fallback;
     }
 
     this.storeVM.$data.language = this._isoCleaner(language);
