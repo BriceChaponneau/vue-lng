@@ -13,7 +13,7 @@
  * name : lng
  * description : Plugin to internationalize app with Vue.js
  * author : Brice CHAPONNEAU
- * version : 1.0.2
+ * version : 1.0.3
  *
  */
 
@@ -105,7 +105,7 @@ class lng {
    * @param {string} iso
    */
   _isoCleaner(iso) {
-    if (!iso) return "fr";
+    if (!iso) return this.storeVM.$data.fallback;
     return iso.split("-")[0].toLowerCase();
   }
 
