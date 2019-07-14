@@ -29,7 +29,6 @@ class lng {
     if (opts.fallback === undefined)
       throw new Error("Plugin lng : [options.fallback] is undefined");
 
-
     // création d'une nouvelle instance pour gérer des données réactives
     this.storeVM = new Vue({
       data() {
@@ -53,7 +52,8 @@ class lng {
       this.storeVM.$data.startOne = opts.startOne;
 
     // utilise la langue par default si la lnague est introuvable
-    if (typeof opts.fallback === "string") this.storeVM.$data.fallback = opts.fallback;
+    if (typeof opts.fallback === "string")
+      this.storeVM.$data.fallback = opts.fallback;
 
     // chargement des messages
     this.storeVM.$data.messages = opts.messages;
@@ -62,16 +62,25 @@ class lng {
     if (window.localStorage.language === undefined) {
       if (opts.language) this.storeVM.$data.language = opts.language;
       else
-        this.storeVM.$data.language = opts.language || this._isoCleaner(navigator.userLanguage || navigator.language || navigator.browserLanguage || this.storeVM.$data.fallback);
+        this.storeVM.$data.language =
+          opts.language ||
+          this._isoCleaner(
+            navigator.userLanguage ||
+              navigator.language ||
+              navigator.browserLanguage ||
+              this.storeVM.$data.fallback
+          );
 
       // sauvegarde automatique de la langue dans le localstorage
       window.localStorage.language = this.storeVM.$data.language;
     } else {
-      this.storeVM.$data.language = window.localStorage.fallback;
+      this.storeVM.$data.language = window.localStorage.language;
     }
 
     // charge le(s) fichier(s) de la langue courante
-    if (this.storeVM.$data.messages[this.storeVM.$data.language] instanceof Array) {
+    if (
+      this.storeVM.$data.messages[this.storeVM.$data.language] instanceof Array
+    ) {
       this.storeVM.$data.json = this.extendJson(
         this.storeVM.$data.messages[this.storeVM.$data.language]
       );
@@ -86,15 +95,26 @@ class lng {
       if (this.storeVM.$data.fallback) {
         const defaut = this.storeVM.$data.fallback;
 
-        if (this.storeVM.$data.debug) console.error(`Plugin lng : language "${this.storeVM.$data.language}" not found, fallback to "${defaut}"`);
+        if (this.storeVM.$data.debug)
+          console.error(
+            `Plugin lng : language "${
+              this.storeVM.$data.language
+            }" not found, fallback to "${defaut}"`
+          );
 
         window.localStorage.language = defaut;
         this.storeVM.$data.language = defaut;
         this.storeVM.$data.json = this.storeVM.$data.messages[defaut];
 
-        if (this.storeVM.$data.json === undefined) throw new Error(`Plugin lng : fallback language error, "${defaut}" not found !`);
+        if (this.storeVM.$data.json === undefined)
+          throw new Error(
+            `Plugin lng : fallback language error, "${defaut}" not found !`
+          );
       } else {
-        if (this.storeVM.$data.debug) console.error(`Plugin lng : language "${this.storeVM.$data.language}" not found !`);
+        if (this.storeVM.$data.debug)
+          console.error(
+            `Plugin lng : language "${this.storeVM.$data.language}" not found !`
+          );
       }
     }
   }
@@ -137,7 +157,10 @@ class lng {
    */
   _jsonPathToValue(json, path, error = null) {
     if (!(json instanceof Object) || typeof path === "undefined") {
-      if (this.storeVM.$data.debug) console.warn(`Plugin lng : Not valid argument:json:${json}, path: ${path}`);
+      if (this.storeVM.$data.debug)
+        console.warn(
+          `Plugin lng : Not valid argument:json:${json}, path: ${path}`
+        );
       return;
     }
     path = path.replace(/\[(\w+)\]/g, ".$1"); // converti les index en propriétés
@@ -270,10 +293,10 @@ class lng {
   lngSet(language = this.storeVM.$data.fallback) {
     const errorNotExist = `Plugin lng : language [${language}] does not exist, selected : [${
       this.storeVM.$data.fallback
-      }]`;
+    }]`;
     const errorUndefined = `Plugin lng : language [${language}] is undefined, selected : [${
       this.storeVM.$data.language
-      }]`;
+    }]`;
 
     // la langue est la même que celle déjà definie. on ne fait rien
     if (language === this.storeVM.$data.language) return;
