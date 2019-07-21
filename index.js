@@ -13,7 +13,7 @@
  * name : lng
  * description : Plugin to internationalize app with Vue.js
  * author : Brice CHAPONNEAU
- * version : 1.0.3
+ * version : 1.0.4
  *
  */
 
@@ -62,14 +62,12 @@ class lng {
     if (window.localStorage.language === undefined) {
       if (opts.language) this.storeVM.$data.language = opts.language;
       else
-        this.storeVM.$data.language =
-          opts.language ||
-          this._isoCleaner(
-            navigator.userLanguage ||
-              navigator.language ||
-              navigator.browserLanguage ||
-              this.storeVM.$data.fallback
-          );
+        this.storeVM.$data.language = this._isoCleaner(
+          navigator.userLanguage ||
+            navigator.language ||
+            navigator.browserLanguage ||
+            this.storeVM.$data.fallback
+        );
 
       // sauvegarde automatique de la langue dans le localstorage
       window.localStorage.language = this.storeVM.$data.language;

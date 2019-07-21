@@ -1,7 +1,7 @@
 {
   "name": "vue-lng",
   "description": "Internationalization plugin for Vue.js. Quick and Easy i18n Vue.js plugin !",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": {
     "name": "Brice CHAPONNEAU",
     "email": "chaponneau.brice@gmail.com"
